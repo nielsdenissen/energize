@@ -1,11 +1,15 @@
 import datetime
 from energize.energy_prediction import energy_prediction
+import cv2
+from PIL import ImageGrab
+import numpy as np
 
 
 def main():
     print("-- RUNNING Capture Video")
-    # TODO: replace empty_image with actual image (representation by opencv probably)
-    energy_prediction.main("empty_image", datetime.datetime.now())
+    while True:
+        im = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_RGB2BGR)
+        energy_prediction.main(im, datetime.datetime.now())
 
 
 if __name__ == "__main__":
