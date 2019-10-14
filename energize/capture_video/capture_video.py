@@ -5,7 +5,7 @@ from PIL import ImageGrab
 import numpy as np
 
 
-def main():
+def capture_video():
     print("-- RUNNING Capture Video")
     while True:
         im = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_RGB2BGR)
@@ -13,4 +13,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    capture_video()
