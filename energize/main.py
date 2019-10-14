@@ -4,16 +4,6 @@ from energize.report_energy_levels.report_energy_level import ReportEnergyLevel
 import argparse
 
 
-class Stub:
-    def do_shizzle(self, *args, **kwargs):
-        print("====== Args ======")
-        for a in args:
-            print(type(a))
-        print("===== KwArgs =====")
-        for k, v in kwargs:
-            print(k, type(v))
-
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Energize')
@@ -22,7 +12,7 @@ if __name__ == "__main__":
     verbose = args['v']
 
     re = ReportEnergyLevel()
-    pe = PredictEnergy(receiver=re, scale=1)
-    cv = CaptureVideo(receiver=pe, source='camera')
+    pe = PredictEnergy(output_fnc=re.do_shizzle, scale=1)
+    cv = CaptureVideo(output_fnc=pe.do_shizzle, source='camera')
 
     cv.do_shizzle()

@@ -1,11 +1,10 @@
-from energize.utils.utils import Stub
 import cv2
 import face_recognition
 
 class PredictEnergy:
 
-    def __init__(self, receiver=None, scale=1):
-        self._receiver = receiver if receiver is not None else Stub()
+    def __init__(self, output_fnc=None, scale=1):
+        self._output_fnc = output_fnc
         self.scale = 1
 
     def find_faces(self, image):
@@ -22,14 +21,12 @@ class PredictEnergy:
 
         return []
 
-    def do_shizzle(self, image):
+    def do_shizzle(self, **kwargs):
+        image = kwargs.pop('image')
         locations = self.find_faces(image)
         names = self.compare_faces(image, locations)
         expressions = self.read_expressions(image)
-        self._receiver.do_shizzle(image=image,
-                                  locations=locations,
-                                  names=names,
-                                  expressions=expressions)
+        self._output_fnc(image=image, locations=locations, names=names, expressions=expressions)
 
 
 

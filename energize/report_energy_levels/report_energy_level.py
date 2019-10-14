@@ -1,12 +1,9 @@
 import cv2
-from energize.utils.utils import Stub
 
 class ReportEnergyLevel:
 
-    def __init__(self, receiver=None):
-        self._receiver = receiver if receiver is not None else Stub()
+    def __init__(self, output_fnc=None):
         cv2.namedWindow("Energize", cv2.WINDOW_NORMAL)
-        #cv2.resizeWindow("Energize", 100, 1200)
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop("image", None)

@@ -2,10 +2,6 @@ import json
 import numpy as np
 import time
 
-class Stub:
-    def do_shizzle(self, *args, **kwargs):
-        pass
-
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
