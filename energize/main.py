@@ -1,6 +1,18 @@
-from energize.capture_video.capture_video import capture_video
-from energize.energy_prediction import energy_prediction
+from energize.capture_video.capture_video import CaptureVideo
+#from energize.energy_prediction import PredictEnergy
 import argparse
+
+
+class Stub:
+    def do_shizzle(self, *args, **kwargs):
+        print("====== Args ======")
+        for a in args:
+            print(type(a))
+        print("===== KwArgs =====")
+        for k, v in kwargs:
+            print(k, type(v))
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Energize')
@@ -9,4 +21,5 @@ if __name__ == "__main__":
     verbose = args['v']
 
 
-    capture_video(energy_prediction.main)
+    cv = CaptureVideo()
+    cv.do_shizzl(Stub())

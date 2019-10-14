@@ -1,18 +1,15 @@
-from energize.energy_prediction import energy_prediction
-from energize.utils import utils
-import datetime
 import cv2
 from PIL import ImageGrab
 import numpy as np
-import json
 
+class CaptureVideo:
 
-def capture_video(conn):
-    print("-- RUNNING Capture Video")
-    while True:
-        im = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_RGB2BGR)
-        conn(im)
+    def __init__(self):
+        pass
 
-
-if __name__ == "__main__":
-    capture_video(energy_prediction.main)
+    def do_shizzl(self, receiver):
+        if not hasattr(receiver, "do_shizzle") or not hasattr(receiver.do_shizzle, "__call__"):
+            raise RuntimeError("Receiver {} not callable with do_shizzle method".format(receiver.__name__))
+        while True:
+            im = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_RGB2BGR)
+            receiver.do_shizzl(im)

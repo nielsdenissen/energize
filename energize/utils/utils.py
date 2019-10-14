@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import multiprocessing
 
 
 class NumpyEncoder(json.JSONEncoder):
