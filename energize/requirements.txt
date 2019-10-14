@@ -1,4 +1,4 @@
-cv2
+opencv-python
 pillow
 numpy
-import face_recognition
+face_recognition
