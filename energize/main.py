@@ -21,8 +21,8 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     verbose = args['v']
 
-    re = ReportEnergyLevel(receiver=None)
-    pe = PredictEnergy(receiver=re)
-    cv = CaptureVideo(receiver=pe)
+    re = ReportEnergyLevel()
+    pe = PredictEnergy(receiver=re, scale=1)
+    cv = CaptureVideo(receiver=pe, source='camera')
 
     cv.do_shizzle()

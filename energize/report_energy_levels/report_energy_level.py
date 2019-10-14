@@ -3,10 +3,10 @@ from energize.utils.utils import Stub
 
 class ReportEnergyLevel:
 
-    def __init__(self, receiver):
+    def __init__(self, receiver=None):
         self._receiver = receiver if receiver is not None else Stub()
         cv2.namedWindow("Energize", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("Energize", 100, 1200)
+        #cv2.resizeWindow("Energize", 100, 1200)
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop("image", None)
@@ -26,6 +26,7 @@ class ReportEnergyLevel:
                 cv2.putText(image, name, (left + 6, bottom - 6), cv2.FONT_HERSHEY_DUPLEX, 1.0, (255, 255, 255), 1)
 
         cv2.imshow("Energize", image)
+        cv2.waitKey(1)
 
     def cleanup(self):
         cv2.destroyAllWindows()
