@@ -1,5 +1,7 @@
 from energize.capture_video.capture_video import CaptureVideo
-from energize.energy_prediction.energy_prediction import PredictEnergy
+from energize.energy_prediction.find_faces import FindFaces
+from energize.energy_prediction.compare_faces import ComareFaces
+from energize.energy_prediction.read_expressions import ReadExpressions
 from energize.report_energy_levels.report_energy_level import ReportEnergyLevel
 import argparse
 
@@ -11,8 +13,10 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     verbose = args['v']
 
-    re = ReportEnergyLevel()
-    pe = PredictEnergy(output_fnc=re.do_shizzle, scale=1)
-    cv = CaptureVideo(output_fnc=pe.do_shizzle, source='camera')
+    repenelv = ReportEnergyLevel()
+    readexpr = ReadExpressions(output_fnc=repenelv.do_shizzle)
+    compface = ComareFaces(output_fnc=readexpr.do_shizzle, known_faces=None)
+    findface = FindFaces(output_fnc=compface.do_shizzle, scale=1.)
+    capvideo = CaptureVideo(output_fnc=findface.do_shizzle, source='camera')
 
-    cv.do_shizzle()
+    capvideo.do_shizzle()
