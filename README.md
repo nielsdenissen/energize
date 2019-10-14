@@ -9,3 +9,4 @@ There are 3 parts to this project:
 2. Based on images received, predict the energy in the room. Call Energy Reporter to report on it
 3. Report energy data back to the video conference
 
+![alt text](./docs/img/EnergyMeter.png)
