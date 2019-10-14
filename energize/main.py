@@ -1,5 +1,6 @@
 from energize.capture_video.capture_video import CaptureVideo
 from energize.energy_prediction.energy_prediction import PredictEnergy
+from energize.report_energy_levels.report_energy_level import ReportEnergyLevel
 import argparse
 
 
@@ -20,8 +21,8 @@ if __name__ == "__main__":
     args = vars(parser.parse_args())
     verbose = args['v']
 
-
-    pe = PredictEnergy(receiver=None)
+    re = ReportEnergyLevel(receiver=None)
+    pe = PredictEnergy(receiver=re)
     cv = CaptureVideo(receiver=pe)
 
     cv.do_shizzle()
