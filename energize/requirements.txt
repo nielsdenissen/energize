@@ -1,0 +1,4 @@
+cv2
+pillow
+numpy
+import face_recognition
