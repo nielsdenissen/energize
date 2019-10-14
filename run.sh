@@ -1,1 +1,1 @@
-python -m energize.capture_video.capture_video
+python -m energize.main
