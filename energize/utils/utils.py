@@ -2,6 +2,9 @@ import json
 import numpy as np
 import multiprocessing
 
+class Stub:
+    def do_shizzle(self, *args, **kwargs):
+        pass
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):

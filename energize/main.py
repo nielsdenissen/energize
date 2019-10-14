@@ -1,5 +1,5 @@
 from energize.capture_video.capture_video import CaptureVideo
-#from energize.energy_prediction import PredictEnergy
+from energize.energy_prediction.energy_prediction import PredictEnergy
 import argparse
 
 
@@ -21,5 +21,7 @@ if __name__ == "__main__":
     verbose = args['v']
 
 
-    cv = CaptureVideo()
-    cv.do_shizzl(Stub())
+    pe = PredictEnergy(receiver=None)
+    cv = CaptureVideo(receiver=pe)
+
+    cv.do_shizzle()
