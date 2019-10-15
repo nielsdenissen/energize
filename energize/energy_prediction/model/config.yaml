@@ -1,0 +1,3 @@
+fer2013_csv_filepath: "fer2013.csv"
+processed_data_filepath: "data.pickle"
+model_filepath: "model.h5"
