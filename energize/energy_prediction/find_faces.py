@@ -19,3 +19,5 @@ class FindFaces(PipelineModule):
         scaled_locations = face_recognition.face_locations(scaled_image)
         locations = [list(int(l / self.scale) for l in loc) for loc in scaled_locations]
         return locations
+
+
