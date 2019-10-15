@@ -54,12 +54,13 @@ class CompareFaces(PipelineModule):
             try:
                 faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
                 distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
-                idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+                distances[np.where(np.isnan(distances))] = np.infty
+                idx = np.unravel_index(np.argmin(distances), distances.shape)
                 while distances[idx] < self.tolerance:
                     names[idx[0]] = self.names[idx[1]]
-                    distances[idx[0], :, :] = np.NaN
-                    distances[:, idx[1], :] = np.NaN
-                    idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+                    distances[idx[0], :, :] = np.infty
+                    distances[:, idx[1], :] = np.infty
+                    idx = np.unravel_index(np.argmin(distances), distances.shape)
             except Exception as e:
                 print(f"EXCEPTION in compare_faces: {e}")
         return names
