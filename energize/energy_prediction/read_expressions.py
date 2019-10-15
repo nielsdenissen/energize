@@ -27,5 +27,11 @@ class ReadExpressions(PipelineModule):
         return faces
 
     def get_expressions(self, faces):
-        gray_faces = [cv2.cvtColor(face, cv2.COLOR_BGR2GRAY) for face in faces]
-        return self.model.predict_from_faces(gray_faces)
+        expressions = ["Unknown"]*len(faces)
+        if len(faces) > 0:
+            try:
+                gray_faces = [cv2.cvtColor(face, cv2.COLOR_BGR2GRAY) for face in faces]
+                expressions = self.model.predict_from_faces(gray_faces)
+            except Exception as e:
+                print(f"EXCEPTION in get_expressions: {e}")
+        return expressions
