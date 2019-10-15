@@ -1,4 +1,7 @@
 import cv2
+import slack
+import os
+
 
 class ReportEnergyLevel:
 
@@ -12,7 +15,7 @@ class ReportEnergyLevel:
         expressions = list(kwargs.pop("expressions", []))
 
         names = names + ["Unknown"]*(len(locations) - len(names))
-        expressions = expressions + ["Unknown"]*(len(locations) - len(expressions))
+        expressions = expressionspip + ["Unknown"]*(len(locations) - len(expressions))
         face_info = list(zip(locations, names, expressions))
 
         if image is not None:
@@ -31,3 +34,16 @@ class ReportEnergyLevel:
 
     def __del__(self):
         self.cleanup()
+
+    def send_slack_message(self, data):
+        client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
+        channel_id = os.environ['ENERGIZE_CHANNEL_ID']  # Energize channel
+        client.chat_postMessage(channel=channel_id, text=data)
+
+    def lookup_user_id(self, name):
+        client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
+        member_list = client.users_list().data
+        for user in member_list['members']:
+            if name.lower() in user['name']:
+                return user['id']
+
