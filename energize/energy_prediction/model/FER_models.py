@@ -14,8 +14,11 @@ from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
 from keras.models import load_model
 import os
+<<<<<<< HEAD
 import cv2
 import numpy as np
+=======
+>>>>>>> 5efeba4... Add meeting start notification
 
 class ConvolutionalNNDropout(object):
     """
@@ -110,6 +113,7 @@ class ConvolutionalNNDropout(object):
         :param image_data: Numpy array of training data in shape (num_samples, image_size[0], image_size[1], num_channels)
         :return:
         """
+<<<<<<< HEAD
 
 
         return self.model.predict(image_data)
@@ -129,6 +133,10 @@ class ConvolutionalNNDropout(object):
         return predictions
 
 
+=======
+        return self.model.predict(image_data)
+
+>>>>>>> 5efeba4... Add meeting start notification
     def load_model(self, model_filepath):
         # TODO:Load pickle
         if model_filepath and os.path.isfile(model_filepath) :

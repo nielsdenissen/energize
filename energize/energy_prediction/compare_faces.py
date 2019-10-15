@@ -37,7 +37,10 @@ class CompareFaces(PipelineModule):
             faces = np.load(faces)
             self.names = faces['names']
             self.embeddings = faces['embeddings']
+<<<<<<< HEAD
         print("Read {} names. Embeddings with shape {}".format(self.names, self.embeddings.shape))
+=======
+>>>>>>> 5efeba4... Add meeting start notification
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image', None)
@@ -49,16 +52,29 @@ class CompareFaces(PipelineModule):
         self.next.do_shizzle(image=image, locations=locations, names=names)
 
     def get_names(self, image, locations):
+<<<<<<< HEAD
         names = ["Unknown"] * len(locations)
         try:
             faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
             distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
+=======
+        faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
+        distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
+        names = ["Unknown"] * len(locations)
+        try:
+>>>>>>> 5efeba4... Add meeting start notification
             idx = np.unravel_index(np.nanargmin(distances), distances.shape)
             while distances[idx] < self.tolerance:
                 names[idx[0]] = self.names[idx[1]]
                 distances[idx[0], :, :] = np.NaN
                 distances[:, idx[1], :] = np.NaN
                 idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+<<<<<<< HEAD
         except Exception as e:
             print(f"EXCEPTION in compare_faces: {e}")
         return names
+=======
+        except ValueError:
+            pass
+        return names
+>>>>>>> 5efeba4... Add meeting start notification

@@ -16,6 +16,7 @@ if __name__ == "__main__":
     verbose = args['v']
     known_faces = args['known_faces']
 
+<<<<<<< HEAD
     # TODO save the full model somewhere, with the attributes
     labels_map = {0: "Negative", 1: "Neutral", 2: "Positive"}
     model = ConvolutionalNNDropout((48, 48), labels_map, verbose=True, model_filepath="energize/energize_prediction/model/model.h5")
@@ -26,4 +27,12 @@ if __name__ == "__main__":
     find_faces = FindFaces(next=read_expressions, scale=1.)
     capture_video = CaptureVideo(next=find_faces, source='camera')
 
+=======
+    report_energy_level = ReportEnergyLevel()
+    read_expressions = ReadExpressions(next=report_energy_level)
+    compare_faces = CompareFaces(next=report_energy_level, faces=known_faces, tolerance=0.7)
+    find_faces = FindFaces(next=read_expressions, scale=1.)
+    capture_video = CaptureVideo(next=find_faces, source='camera')
+
+>>>>>>> 5efeba4... Add meeting start notification
     capture_video.do_shizzle()
