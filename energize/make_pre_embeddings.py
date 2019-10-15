@@ -12,7 +12,7 @@ if __name__ == "__main__":
     known_faces = args['known_faces'][0]
     outfile = args['o'][0]
 
-    cf = CompareFaces(output_fnc=None, faces=known_faces, tolerance=None)
+    cf = CompareFaces(next=None, faces=known_faces, tolerance=None)
     print(cf.names)
     print(cf.embeddings.shape)
     np.savez(outfile, names=np.array(cf.names), embeddings=cf.embeddings)

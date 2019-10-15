@@ -1,14 +1,20 @@
-import cv2
-import face_recognition
+from energize.pipeline.pipeline import PipelineModule
 
-class ReadExpressions:
+class ReadExpressions(PipelineModule):
 
-    def __init__(self, output_fnc=None):
-        self._output_fnc = output_fnc
+    def __init__(self, next=None):
+        super().__init__(next)
+        self.FER_model = None
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image', None)
         locations = kwargs.pop('locations', [])
         names = kwargs.pop('names', [])
-        expressions = []
-        self._output_fnc(image=image, locations=locations, names=names, expressions=expressions)
+        if image is not None and len(locations) > 0:
+            expressions = self.get_expressions(image, locations)
+        else:
+            expressions = []
+        self.next.do_shizzle(image=image, locations=locations, names=names, expressions=expressions)
+
+    def get_expressions(self, image, locations):
+        return ["Unknown"]*len(locations)

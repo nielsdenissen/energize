@@ -3,9 +3,10 @@ import slack
 import os
 
 
-class ReportEnergyLevel:
+class ReportEnergyLevel(PipelineModule):
 
-    def __init__(self, output_fnc=None):
+    def __init__(self, next=None):
+        super().__init__(next)
         cv2.namedWindow("Energize", cv2.WINDOW_NORMAL)
 
     def do_shizzle(self, **kwargs):
@@ -35,15 +36,31 @@ class ReportEnergyLevel:
     def __del__(self):
         self.cleanup()
 
-    def send_slack_message(self, data):
-        client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
-        channel_id = os.environ['ENERGIZE_CHANNEL_ID']  # Energize channel
-        client.chat_postMessage(channel=channel_id, text=data)
-
     def lookup_user_id(self, name):
         client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
         member_list = client.users_list().data
         for user in member_list['members']:
             if name.lower() in user['name']:
                 return user['id']
+
+    def format_name_for_slack(self, name):
+        return "<@{}>".format(name)
+
+    def send_slack_message(self, text):
+        client = slack.WebClient(token=os.environ['SLACK_BOT_TOKEN'])
+        channel_id = os.environ['ENERGIZE_CHANNEL_ID']  # Energize channel
+        client.chat_postMessage(channel=channel_id, text=text)
+
+    def meeting_start_notification(self, names, meeting_room, energy_level="Bored"):
+        user_ids = []
+        for name in names:
+            user_ids.append(ReportEnergyLevel.format_name_for_slack(ReportEnergyLevel.lookup_user_id(name)))
+        message = "The following people have been spotted in meeting room {} {} and the current energy level is: {}"\
+            .format(
+                meeting_room,
+                " ".join(user_ids),
+                energy_level
+            )
+        ReportEnergyLevel.send_slack_message(message)
+
 

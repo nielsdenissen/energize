@@ -2,11 +2,13 @@ import cv2
 import face_recognition
 import os
 import numpy as np
+from energize.pipeline.pipeline import PipelineModule
 
-class CompareFaces:
 
-    def __init__(self, output_fnc=None, faces=None, tolerance=0.6):
-        self._output_fnc = output_fnc
+class CompareFaces(PipelineModule):
+
+    def __init__(self, next=None, faces=None, tolerance=0.6):
+        super().__init__(next)
         self.tolerance = tolerance
         if os.path.isdir(faces):
             known_faces = {}
@@ -35,24 +37,27 @@ class CompareFaces:
             faces = np.load(faces)
             self.names = faces['names']
             self.embeddings = faces['embeddings']
-        print("found embeddings for {}".format(self.names))
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image', None)
         locations = kwargs.pop('locations', [])
-        if len(locations) > 0:
-            faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
-            distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
-            names = ["Unknown"]*len(locations)
-            try:
-                idx = np.unravel_index(np.nanargmin(distances), distances.shape)
-                while distances[idx] < self.tolerance:
-                    names[idx[0]] = self.names[idx[1]]
-                    distances[idx[0], :, :] = np.NaN
-                    distances[:, idx[1], :] = np.NaN
-                    idx = np.unravel_index(np.nanargmin(distances), distances.shape)
-            except ValueError:
-                pass
+        if image is not None and len(locations) > 0:
+            names = self.get_names(image, locations)
         else:
             names = []
-        self._output_fnc(image=image, locations=locations, names=names)
+        self.next.do_shizzle(image=image, locations=locations, names=names)
+
+    def get_names(self, image, locations):
+        faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
+        distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
+        names = ["Unknown"] * len(locations)
+        try:
+            idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+            while distances[idx] < self.tolerance:
+                names[idx[0]] = self.names[idx[1]]
+                distances[idx[0], :, :] = np.NaN
+                distances[:, idx[1], :] = np.NaN
+                idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+        except ValueError:
+            pass
+        return names

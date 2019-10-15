@@ -1,3 +1,4 @@
+slackclient
 cmake
 opencv-python
 pillow
