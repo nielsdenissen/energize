@@ -5,7 +5,7 @@ from energize.energy_prediction.compare_faces import CompareFaces
 from energize.energy_prediction.find_faces import FindFaces
 
 read_expressions = ReadExpressions()
-compare_faces = CompareFaces(faces="/Users/faab/Desktop/energize/energize/known_faces2.npz", tolerance=0.7)
+compare_faces = CompareFaces(faces="/Users/nielsdenissen/Downloads/known_faces2.npz", tolerance=0.7)
 find_faces = FindFaces(scale=1)
 
 def predict_energy(img):
