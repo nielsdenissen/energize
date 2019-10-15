@@ -37,6 +37,8 @@ class FindFaces(PipelineModule):
             top, right, bottom, left = face_location
             face_image = image[top:bottom, left:right]
             faces.append(face_image)
-        return faces
 
         self.next.do_shizzle(faces=faces)
+
+        return faces
+
