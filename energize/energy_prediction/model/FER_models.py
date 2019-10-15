@@ -14,6 +14,8 @@ from keras.optimizers import Adam
 from keras.losses import categorical_crossentropy
 from keras.models import load_model
 import os
+import cv2
+import numpy as np
 
 class ConvolutionalNNDropout(object):
     """
@@ -108,7 +110,24 @@ class ConvolutionalNNDropout(object):
         :param image_data: Numpy array of training data in shape (num_samples, image_size[0], image_size[1], num_channels)
         :return:
         """
+
+
         return self.model.predict(image_data)
+
+    def predict_from_faces(self, faces):
+        """
+
+        :param faces: list of faces (each a 2d numpy array, of different sizes)
+        :return:
+        """
+        resized_faces = np.array([cv2.resize(face, self.image_size, interpolation=cv2.INTER_CUBIC) for face in faces])
+        # add channel
+        resized_faces = np.expand_dims(resized_faces, axis = -1)
+
+        print(resized_faces.shape)
+        return resized_faces
+        #return self.predict(resized_faces)
+
 
     def load_model(self, model_filepath):
         # TODO:Load pickle
