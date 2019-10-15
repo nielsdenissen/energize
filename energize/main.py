@@ -15,6 +15,8 @@ if __name__ == "__main__":
     verbose = args['v']
     known_faces = args['known_faces']
 
+
+
     report_energy_level = ReportEnergyLevel()
     read_expressions = ReadExpressions(next=report_energy_level)
     # compare_faces = CompareFaces(next=report_energy_level, faces=known_faces, tolerance=0.7)
