@@ -18,6 +18,11 @@ Start the prediction server:
 python -m energize.main_server
 ```
 
+Install extension:
+1. Go to `chrome://extensions` and enable development mode
+2. Click load unpacked and select the `capture_video_web` folder to install extension
+3. Visit `meet.google.com` and click on extension icon to Start
+
 ## How to test
 
 If you want to test while the server is running, you can run:
