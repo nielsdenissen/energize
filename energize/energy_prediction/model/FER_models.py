@@ -34,11 +34,11 @@ class ConvolutionalNNDropout(object):
 
     """
 
-    def __init__(self, image_size, channels, emotion_map, filters=10, kernel_size=(4, 4), activation='relu',
+    def __init__(self, image_size, emotion_map, filters=10, kernel_size=(4, 4), activation='relu',
                  verbose=False, model_filepath = None):
-        self.channels = channels
         self.image_size = image_size
         self.verbose = verbose
+        self.channels = 1
 
         self.emotion_map = emotion_map
 
