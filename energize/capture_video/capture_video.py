@@ -11,7 +11,7 @@ class CaptureVideo(PipelineModule):
 
     def do_shizzle(self):
         if self.source == 'camera':
-            source = cv2.VideoCapture(0)
+            source = cv2.VideoCapture(1)
             while True:
                 _, im = source.read()
                 self.next.do_shizzle(image=im)
