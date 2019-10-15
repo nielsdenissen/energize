@@ -1,4 +1,8 @@
 cmake
+flask
+flask-cors
+flask-sockets
+websocket-client
 opencv-python
 pillow
 numpy
