@@ -20,3 +20,4 @@ class FindFaces(PipelineModule):
         locations = [list(int(l / self.scale) for l in loc) for loc in scaled_locations]
         return locations
 
+
