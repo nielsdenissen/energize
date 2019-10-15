@@ -11,7 +11,7 @@ class ReadExpressions(PipelineModule):
         locations = kwargs.pop('locations', [])
         names = kwargs.pop('names', [])
         if image is not None and len(locations) > 0:
-            expressions = self.get_expressions()
+            expressions = self.get_expressions(image, locations)
         else:
             expressions = []
         self.next.do_shizzle(image=image, locations=locations, names=names, expressions=expressions)
