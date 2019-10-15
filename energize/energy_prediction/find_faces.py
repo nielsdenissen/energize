@@ -11,7 +11,9 @@ class FindFaces(PipelineModule):
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image')
+        self.next.do_shizzle(image=image, locations=self.find_faces(image))
+
+    def find_faces(self, image):
         scaled_image = cv2.resize(image, (0, 0), fx=self.scale, fy=self.scale)[:, :, ::-1]
         scaled_locations = face_recognition.face_locations(scaled_image)
-        locations = [list(int(l / self.scale) for l in loc) for loc in scaled_locations]
-        self.next.do_shizzle(image=image, locations=locations)
+        return [list(int(l / self.scale) for l in loc) for loc in scaled_locations]
