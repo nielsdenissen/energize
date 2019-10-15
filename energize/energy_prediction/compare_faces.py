@@ -49,10 +49,10 @@ class CompareFaces(PipelineModule):
         self.next.do_shizzle(image=image, locations=locations, names=names)
 
     def get_names(self, image, locations):
-        faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
-        distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
-        names = ["Unknown"] * len(locations)
         try:
+            faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
+            distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
+            names = ["Unknown"] * len(locations)
             idx = np.unravel_index(np.nanargmin(distances), distances.shape)
             while distances[idx] < self.tolerance:
                 names[idx[0]] = self.names[idx[1]]
