@@ -27,7 +27,7 @@ def data_prep(data):
     return data
 
 
-def get_training_data(data, target_size = None):
+def get_training_data(data, target_size = None, convert_to_RGB = False):
     """
 
     :param data: processed data (pd.DataFrame) as a result of data_prep.py
@@ -49,6 +49,10 @@ def get_training_data(data, target_size = None):
 
         for i in tqdm(range(images.shape[0])):
             resized_images[i] = cv2.resize(images[i].squeeze(), (target_size[0], target_size[1]), interpolation = cv2.INTER_CUBIC)
+        images = resized_images
+
+    if convert_to_RGB:
+        images = np.repeat(images, 3, -1)
 
     labels = pd.get_dummies(data['emotion_energy'])
 
