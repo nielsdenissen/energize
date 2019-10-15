@@ -1,1 +1,1 @@
-python -m energize.main --known_faces /Users/faab/Desktop/energize/energize/known_faces.npz
+python -m energize.main_server
