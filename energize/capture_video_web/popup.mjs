@@ -5,10 +5,7 @@ import { dispatch } from "./utils.mjs";
 let state = {};
 
 function loadState() {
-  dispatch({ type: EVENTS.LOAD_POPUP_STATE }).then(rootState => {
-    console.log(rootState);
-    state = rootState;
-  });
+  dispatch({ type: EVENTS.LOAD_POPUP_STATE }).then(update);
 }
 
 loadState();
@@ -20,23 +17,14 @@ function toggleStream() {
 }
 
 function stop() {
-  dispatch({ type: EVENTS.STOP_CAPTURE })
-    .then(s => {
-      state = s;
-      return s;
-    })
-    .then(state => {
-      text.innerHTML = state.started ? "stop energizer" : "start energizer";
-    });
+  dispatch({ type: EVENTS.STOP_CAPTURE }).then(update);
 }
 
 function start() {
-  dispatch({ type: EVENTS.START_CAPTURE })
-    .then(s => {
-      state = s;
-      return s;
-    })
-    .then(state => {
-      text.innerHTML = state.started ? "stop energizer" : "start energizer";
-    });
+  dispatch({ type: EVENTS.START_CAPTURE }).then(update);
+}
+
+function update(receivedState) {
+  state = receivedState;
+  text.innerHTML = receivedState.started ? "stop energizer" : "start energizer";
 }

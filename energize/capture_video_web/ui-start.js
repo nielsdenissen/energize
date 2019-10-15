@@ -1,6 +1,8 @@
-const ui = document.createElement("div");
+(function() {
+  const ui = document.createElement("div");
+  ui.setAttribute('id', 'energizer__ui');
 
-ui.innerHTML = `
+  ui.innerHTML = `
     <style>
       .container {
         position: fixed;
@@ -48,13 +50,12 @@ ui.innerHTML = `
     </div>
   `;
 
-document.querySelector("body").append(ui);
-
-console.log("initializing UI");
-
-chrome.runtime.onMessage.addListener(function(req, sender, respond) {
-  console.log("received message");
-  const progress = document.getElementById("progress-bar");
-  const width = Number(req.payload.energy) + "%";
-  progress.style.width = width;
-});
+  document.querySelector("body").append(ui);
+  console.log("energy monitoring UI added");
+  
+  chrome.runtime.onMessage.addListener(function(req, sender, respond) {
+    const progress = document.getElementById("progress-bar");
+    console.log(`received energy level: ${req.payload.energy}`);
+    progress.style.width = Number(req.payload.energy) + "%";
+  });
+})();
