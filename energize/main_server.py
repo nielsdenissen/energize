@@ -8,6 +8,7 @@ from flask import Flask
 from flask_sockets import Sockets
 from flask_cors import CORS, cross_origin
 
+from energize.energy_prediction import energy_prediction
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -25,27 +26,33 @@ def echo(ws):
     app.logger.info("Connection accepted")
     message_count = 0
 
-    while not ws.closed:
-        energy = random.randrange(0, 100, 1)
-        app.logger.info(f"Current energy level: {energy}")
-        ws.send(json.dumps({"energy":energy}))
-        time.sleep(5)
-
     # while not ws.closed:
-    #     message = ws.receive()
-    #     if message is None:
-    #         app.logger.info("No message received...")
-    #         continue
+    #     energy = random.randrange(0, 100, 1)
+    #     app.logger.info(f"Current energy level: {energy}")
+    #     ws.send(json.dumps({"energy":energy}))
+    #     time.sleep(5)
 
-    #     app.logger.info(f"Message received!")
+    while not ws.closed:
+        message = ws.receive()
+        if message is None:
+            app.logger.info("No message received...")
+            continue
+
+        app.logger.info("Message received!")
+
+        # Cut out the image header in start
+        if "," in message:
+            message = message.split(',')[1]
         
-    #     # Cut out the base64 image info in start
-    #     file_like = base64.b64decode(message[22:])
+        file_like = base64.b64decode(message)
 
-    #     with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
-    #         f.write(file_like)
+        result = energy_prediction.predict_energy(file_like)
+        ws.send(json.dumps(result))
 
-    #     message_count += 1
+        with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
+            f.write(file_like)
+
+        message_count += 1
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 
