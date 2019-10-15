@@ -41,19 +41,23 @@ class CompareFaces(PipelineModule):
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image', None)
         locations = kwargs.pop('locations', [])
-        if len(locations) > 0:
-            faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
-            distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
-            names = ["Unknown"]*len(locations)
-            try:
-                idx = np.unravel_index(np.nanargmin(distances), distances.shape)
-                while distances[idx] < self.tolerance:
-                    names[idx[0]] = self.names[idx[1]]
-                    distances[idx[0], :, :] = np.NaN
-                    distances[:, idx[1], :] = np.NaN
-                    idx = np.unravel_index(np.nanargmin(distances), distances.shape)
-            except ValueError:
-                pass
+        if image is not None and len(locations) > 0:
+            names = self.get_names(image, locations)
         else:
             names = []
         self.next.do_shizzle(image=image, locations=locations, names=names)
+
+    def get_names(self, image, locations):
+        faces = np.array(face_recognition.face_encodings(image, locations, num_jitters=1))
+        distances = np.linalg.norm(faces[:, np.newaxis, np.newaxis, :] - self.embeddings[np.newaxis, :, :, :], axis=3)
+        names = ["Unknown"] * len(locations)
+        try:
+            idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+            while distances[idx] < self.tolerance:
+                names[idx[0]] = self.names[idx[1]]
+                distances[idx[0], :, :] = np.NaN
+                distances[:, idx[1], :] = np.NaN
+                idx = np.unravel_index(np.nanargmin(distances), distances.shape)
+        except ValueError:
+            pass
+        return names
