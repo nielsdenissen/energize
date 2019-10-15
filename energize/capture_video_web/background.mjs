@@ -1,101 +1,103 @@
 import { EVENTS } from "./constants/events.mjs";
-import { socket } from "./config/sockets.mjs";
+import { logger } from "./config/logger.mjs";
 import { getCurrentTab } from "./utils.mjs";
+import { setup } from "./setup.mjs";
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log("extension installed");
-
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
-    chrome.declarativeContent.onPageChanged.addRules([
-      {
-        conditions: [
-          new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: { hostContains: "meet.google.com" } // allow on meet.google.com
-          }),
-          new chrome.declarativeContent.PageStateMatcher({
-            pageUrl: { hostContains: "hangouts.google.com" } // allow on hangouts.google.com
-          })
-        ],
-        actions: [new chrome.declarativeContent.ShowPageAction()]
-      }
-    ]);
-  });
-
-  const state = {
-    started: false
-  };
-
-  chrome.runtime.onMessage.addListener((req, sender, res) => {
-    switch (req.type) {
-      case EVENTS.LOAD_POPUP_STATE: {
-        return res(state);
-      }
-      case EVENTS.START_CAPTURE: {
-        return start().then(() =>
-          res({
-            ...state,
-            started: true
-          })
-        );
-      }
-      case EVENTS.STOP_CAPTURE: {
-        return res({
-          ...state,
-          started: false
-        });
-      }
-    }
-  });
+  logger.log("installed extension");
+  setup();
 });
 
-function start() {
-  return getCurrentTab().then(tab => {
-    capture(tab);
-    initUI(tab);
-  });
-}
+const state = {
+  started: false,
+  tab: null,
+  interval: null
+};
 
-function capture(tab) {
-  const INTERVAL = 5000;
-  setInterval(function() {
-    console.log(`capture every ${INTERVAL}ms`);
-    chrome.tabs.captureVisibleTab(tab.windowId, { format: "jpeg" }, blob => {
-      socket.send(blob);
-      console.log(`screenshot sent`);
-    });
-  }, INTERVAL);
-}
+chrome.runtime.onMessage.addListener((req, sender, res) => {
+  switch (req.type) {
+    case EVENTS.LOAD_POPUP_STATE: {
+      return res(state);
+    }
+    case EVENTS.START_CAPTURE: {
+      start();
+      state.started = true;
+      return res(state);
+    }
+    case EVENTS.STOP_CAPTURE: {
+      stop();
+      state.started = false;
+      return res(state);
+    }
+  }
+});
 
-function initUI(tab) {
-  chrome.tabs.executeScript(tab.id, {
-    file: "./init-UI.js"
-  });
-}
+function socketSetup(tab) {
+  const URL = "ws://4bf6a8c8.ngrok.io/media";
+  const socket = new WebSocket(URL);
 
-socket.onmessage = event => {
-  console.log(`received message from api: ${event}`);
-  getCurrentTab().then(tab => {
+  socket.onopen = () => {
+    logger.log("sockets connection opened");
+  };
+
+  socket.onclose = () => {
+    logger.log("socket connection closed");
+  };
+
+  socket.onerror = () => {
+    socket.close();
+    clearInterval(state.interval);
+  }
+
+  socket.onmessage = event => {
+    logger.log(`received message from api: ${event}`);
     chrome.tabs.sendMessage(tab.id, {
       type: EVENTS.UPDATE_ENERGY,
       payload: JSON.parse(event.data)
     });
-  });
-};
+  };
 
-/**
- * capture as video
- * 
-function capture() {
-  chrome.tabCapture.capture(
-    {
-      audio: true,
-      video: true
-    },
-    stream => {
-      video.srcObject = stream;
-      video.style.display = "block";
-      socket.send(stream);
-    }
-  );
+  return socket;
 }
-*/
+
+let socket;
+
+function start() {
+  getCurrentTab().then(tab => {
+    socket = socketSetup(tab);
+    capture(tab);
+    startUI(tab);
+    state.tab = tab;
+    logger.log('capture started');
+  });
+}
+
+function stop() {
+  stopUI(state.tab);
+  socket.close();
+}
+
+function capture(tab) {
+  const INTERVAL = 5000;
+  state.interval = setInterval(function() {
+    logger.log(`capture screenshot per ${INTERVAL}ms`);
+    chrome.tabs.captureVisibleTab(tab.windowId, { format: "jpeg" }, blob => {
+      socket.send(blob);
+      logger.log(`captured screenshot sent`);
+    });
+  }, INTERVAL);
+}
+
+function startUI(tab) {
+  logger.log('start ui script');
+  chrome.tabs.executeScript(tab.id, {
+    file: "./ui-start.js"
+  });
+}
+
+function stopUI(tab) {
+  logger.log('stop ui script');
+  chrome.tabs.executeScript(tab.id, {
+    file: "./ui-stop.js"
+  });
+}
