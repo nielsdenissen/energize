@@ -37,6 +37,7 @@ class CompareFaces(PipelineModule):
             faces = np.load(faces)
             self.names = faces['names']
             self.embeddings = faces['embeddings']
+        print("Read {} names. Embeddings with shape {}".format(self.names, self.embeddings.shape))
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image', None)
