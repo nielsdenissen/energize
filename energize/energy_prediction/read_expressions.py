@@ -4,6 +4,7 @@ class ReadExpressions(PipelineModule):
 
     def __init__(self, next=None):
         super().__init__(next)
+        self.FER_model = None
 
     def do_shizzle(self, **kwargs):
         image = kwargs.pop('image', None)
