@@ -33,6 +33,7 @@ def get_training_data(data, target_size = None, convert_to_RGB = False):
     :param data: processed data (pd.DataFrame) as a result of data_prep.py
     :param channels: number of image channels (1 for grayscale images)
     :param resize: Tuple (new_image_size[0], new_image_size[1])
+    :param convert_to_RGB:Boolean. If True, we convert the grayscale image to RGB by making 3 copies of the grayscale.
     :return:
         images: np.array of shape (num_samples, image_size[0], image_size[1], channels)
         labels: np.array of shape (num_samples, num_categories)
