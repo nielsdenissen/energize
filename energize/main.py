@@ -15,10 +15,10 @@ if __name__ == "__main__":
     verbose = args['v']
     known_faces = args['known_faces']
 
-    repenelv = ReportEnergyLevel()
-    readexpr = ReadExpressions(output_fnc=repenelv.do_shizzle)
-    compface = CompareFaces(output_fnc=readexpr.do_shizzle, faces=known_faces, tolerance=0.6)
-    findface = FindFaces(output_fnc=compface.do_shizzle, scale=1.)
-    capvideo = CaptureVideo(output_fnc=findface.do_shizzle, source='camera')
+    report_energy_level = ReportEnergyLevel()
+    #read_expressions = ReadExpressions(next=report_energy_level)
+    compare_faces = CompareFaces(next=report_energy_level, faces=known_faces, tolerance=0.7)
+    find_faces = FindFaces(next=compare_faces, scale=1.)
+    capture_video = CaptureVideo(next=find_faces, source='camera')
 
-    capvideo.do_shizzle()
+    capture_video.do_shizzle()
