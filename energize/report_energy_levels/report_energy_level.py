@@ -52,16 +52,17 @@ class ReportEnergyLevel(PipelineModule):
         channel_id = os.environ['ENERGIZE_CHANNEL_ID']  # Energize channel
         client.chat_postMessage(channel=channel_id, text=text)
 
-    def meeting_start_notification(self, names, meeting_room, energy_level="Bored"):
+    def meeting_start_notification(self, predictions):
         user_ids = []
-        for name in names:
-            user_ids.append(ReportEnergyLevel.format_name_for_slack(ReportEnergyLevel.lookup_user_id(name)))
-        message = "The following people have been spotted in meeting room {} {} and the current energy level is: {}"\
+        for attendees in predictions['faces']:
+            user_ids.append(ReportEnergyLevel.format_name_for_slack(ReportEnergyLevel.lookup_user_id(attendees['name'].split()[0])))
+        message = "The following people have been spotted in a meeting room {} and the current energy level is: *{}*"\
             .format(
-                meeting_room,
                 " ".join(user_ids),
-                energy_level
+                predictions['energy']
             )
         ReportEnergyLevel.send_slack_message(message)
+
+    def meeting_update_notification(self, ):
 
 
