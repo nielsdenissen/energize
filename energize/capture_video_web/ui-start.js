@@ -60,7 +60,8 @@
       updateMeter(energy);
 
       const faces = request.payload.faces;
-      faces.map(renderFace);
+      const imageSize = request.payload.image_size;
+      faces.map(face => renderFace(face, imageSize));
     }
   });
 
@@ -74,7 +75,8 @@
 
   function updateMeter(energy) {
     const progress = document.getElementById("progress-bar");
-    progress.style.width = Number(energy) + "%";
+    const percentage = Number(energy) > 5 ? Number(energy) : 5;
+    progress.style.width = percentage + "%";
   }
 
   const EXPRESSION_EMOJI_TABLE = {
@@ -83,13 +85,11 @@
     Negative: "😔"
   };
 
-  function renderFace(face) {
+  function renderFace(face, imageSize) {
     const elementId = `energizer__face__${snakeCase(face.name)}`;
     let element = document.getElementById(elementId);
     if (element) {
-      const x = face.location[0];
-      const y = face.location[1];
-      // element.style.transform = `translate(${x}px, ${y}px)`;
+      getPosition(element);
     } else {
       element = document.createElement("div");
       element.style.cssText = `
@@ -118,7 +118,17 @@
         <span>${face.name}</span>
       `;
       element.setAttribute("id", elementId);
+      getPosition(element);
       body.append(element);
+      console.log(`rendered new element for ${face.name}`);
+    }
+
+    function getPosition(el) {
+      const width = imageSize[1];
+      const height = imageSize[0];
+      const x = face.location[1] / width * window.innerWidth;
+      const y = face.location[0] / height * window.innerHeight;
+      el.style.transform = `translate(${x}px, ${y}px)`;
     }
   }
 })();
