@@ -84,7 +84,7 @@ function stop() {
 }
 
 function capture(tab) {
-  const INTERVAL = 5000;
+  const INTERVAL = 2000;
   state.interval = setInterval(function() {
     logger.log(`capture screenshot per ${INTERVAL}ms`);
     chrome.tabs.captureVisibleTab(tab.windowId, { format: "jpeg" }, blob => {

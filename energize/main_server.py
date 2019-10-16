@@ -4,6 +4,7 @@ import logging
 import os
 import cv2
 import numpy as np
+import random
 
 from flask import Flask
 from flask_sockets import Sockets
@@ -46,7 +47,7 @@ def echo(ws):
             continue
 
         # Skip 4/5 messages
-        if message_count % 5 == 0:
+        if message_count % 1 == 0:
             app.logger.info(f"Message received: {message_count}")
 
             try:
@@ -60,6 +61,7 @@ def echo(ws):
 
                 image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
                 result = PREDICTOR(image)
+                result['energy'] = (result['energy'] + 1) * 50
                 print(result)
                 ws.send(json.dumps(result))
 
