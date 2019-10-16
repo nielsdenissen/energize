@@ -1,14 +1,19 @@
 import base64
 import json
 import logging
-import random
-import time
+import os
+import cv2
+import numpy as np
 
 from flask import Flask
 from flask_sockets import Sockets
 from flask_cors import CORS, cross_origin
 
-from energize.energy_prediction import energy_prediction
+import argparse
+
+from energize.energy_prediction.build_predictor import build_predictor
+
+PREDICTOR = lambda x: {"energy": 42}
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -44,16 +49,17 @@ def echo(ws):
             # Cut out the image header in start
             if "," in message:
                 message = message.split(',')[1]
-            
-            file_like = base64.b64decode(message)
-        
-            result = energy_prediction.predict_energy(file_like)
-            # result = {"energy": random.randrange(1,100,1)}
 
+            file_like = base64.b64decode(message)
+            #result = energy_prediction.predict_energy(file_like)
+
+            image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
+            result = PREDICTOR(image)
+            print(result)
             ws.send(json.dumps(result))
 
-            # with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
-            #     f.write(file_like)
+            #with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
+            #    f.write(file_like)
 
         except Exception as e:
             app.logger.error("ERROR: %s", e)
@@ -66,6 +72,12 @@ def echo(ws):
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", type=str, nargs=1, default="config.ini", help="Config file")
+    args = parser.parse_args()
+
+    PREDICTOR = build_predictor(args.file)
+
     app.logger.setLevel(logging.DEBUG)
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler
