@@ -1,4 +1,5 @@
 import { EVENTS } from "./constants/events.mjs";
+import { WEB_SOCKET_URL } from "./constants/socket.mjs";
 import { logger } from "./config/logger.mjs";
 import { getCurrentTab } from "./utils.mjs";
 import { setup } from "./setup.mjs";
@@ -33,8 +34,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 });
 
 function socketSetup(tab) {
-  const URL = "ws://localhost:5000/media";
-  const socket = new WebSocket(URL);
+  let socket = new WebSocket(WEB_SOCKET_URL);
 
   socket.onopen = () => {
     logger.log("sockets connection opened");
@@ -44,16 +44,20 @@ function socketSetup(tab) {
     logger.log("socket connection closed");
   };
 
-  socket.onerror = () => {
-    socket.close();
-    clearInterval(state.interval);
-  }
+  socket.onerror = error => {
+    logger.log(`encountered error ${error}`);
+    stop();
+
+    logger.log("retrying socket connection");
+    socket = new WebSocket(WEB_SOCKET_URL);
+  };
 
   socket.onmessage = event => {
-    logger.log(`received message from api: ${event}`);
+    const data = JSON.parse(event.data);
+    logger.log("received message from api:", data);
     chrome.tabs.sendMessage(tab.id, {
       type: EVENTS.UPDATE_ENERGY,
-      payload: JSON.parse(event.data)
+      payload: data
     });
   };
 
@@ -68,13 +72,15 @@ function start() {
     capture(tab);
     startUI(tab);
     state.tab = tab;
-    logger.log('capture started');
+    logger.log("capture started");
   });
 }
 
 function stop() {
+  logger.log("stopping application");
   stopUI(state.tab);
-  socket.close();
+  clearInterval(state.interval);
+  socket.close(1000, "stopping application");
 }
 
 function capture(tab) {
@@ -82,21 +88,26 @@ function capture(tab) {
   state.interval = setInterval(function() {
     logger.log(`capture screenshot per ${INTERVAL}ms`);
     chrome.tabs.captureVisibleTab(tab.windowId, { format: "jpeg" }, blob => {
-      socket.send(blob);
+      if (socket.readyState === socket.OPEN) {
+        socket.send(blob);
+      } else {
+        logger.log("socket closed, retrying socket connection");
+        socket = new WebSocket(WEB_SOCKET_URL);
+      }
       logger.log(`captured screenshot sent`);
     });
   }, INTERVAL);
 }
 
 function startUI(tab) {
-  logger.log('start ui script');
+  logger.log("start ui script");
   chrome.tabs.executeScript(tab.id, {
     file: "./ui-start.js"
   });
 }
 
 function stopUI(tab) {
-  logger.log('stop ui script');
+  logger.log("stop ui script");
   chrome.tabs.executeScript(tab.id, {
     file: "./ui-stop.js"
   });

@@ -1,4 +1,5 @@
 (function() {
+  const body = document.querySelector("body");
   const ui = document.createElement("div");
   ui.setAttribute('id', 'energizer__ui');
 
@@ -50,12 +51,64 @@
     </div>
   `;
 
-  document.querySelector("body").append(ui);
+  body.append(ui);
   console.log("energy monitoring UI added");
   
-  chrome.runtime.onMessage.addListener(function(req, sender, respond) {
-    const progress = document.getElementById("progress-bar");
-    console.log(`received energy level: ${req.payload.energy}`);
-    progress.style.width = Number(req.payload.energy) + "%";
+  chrome.runtime.onMessage.addListener(function(request, sender, respond) {
+    console.log("message received:", request);
+    if (request.payload) {
+      const energy = request.payload.energy;
+      updateMeter(energy);
+
+      const faces = request.payload.faces;
+      faces.map(renderFace);
+    }
   });
+
+  function updateMeter(energy) {
+    const progress = document.getElementById("progress-bar");
+    progress.style.width = Number(energy) + "%";
+  }
+
+  const EXPRESSION_EMOJI_TABLE = {
+    "Positive": "😁",
+    "Neutral": "🙂",
+    "Negative": "😔"
+  }
+
+  function renderFace(face) {
+    const elementId = `energizer__face__${face.name}`;
+    let element = document.getElementById(elementId);
+    if (element) {
+      // update element position
+    } else {
+      element = document.createElement("div");
+      element.style.cssText = `
+        background: #000000;
+        color: white;
+        box-sizing: border-box;
+        font-size: 18px;
+        display: flex;
+        position: fixed;
+        top: 20px;
+        align-items: center;
+        left: 20px;
+        border-radius: 50px;
+        padding: 8px 10px 10px 20px;
+        z-index: 1;
+      `
+      element.innerHTML = `
+        <style>
+          .emoji {
+            font-size:32px;
+            margin-left: 12px;
+          }
+        </style>
+        <span>${face.name}</span>
+        <span>${EXPRESSION_EMOJI_TABLE[face.expression] || "🙃"}</span>
+      `;
+      element.setAttribute('id', `energizer__face__${face.name}`)
+      body.append(element);
+    }
+  }
 })();
