@@ -1,10 +1,10 @@
 import cv2
-from energize.pipeline.pipeline import PipelineModule
+#from energize.pipeline.pipeline import PipelineModule
 import slack
 import os
 
 
-class ReportEnergyLevel(PipelineModule):
+class ReportEnergyLevel:
 
     def __init__(self, next=None):
         super().__init__(next)
@@ -55,14 +55,17 @@ class ReportEnergyLevel(PipelineModule):
     def meeting_start_notification(self, predictions):
         user_ids = []
         for attendees in predictions['faces']:
-            user_ids.append(ReportEnergyLevel.format_name_for_slack(ReportEnergyLevel.lookup_user_id(attendees['name'].split()[0])))
+            user_ids.append(ReportEnergyLevel.
+                            format_name_for_slack(ReportEnergyLevel.lookup_user_id(attendees['name'].split()[0])))
+
+        name_energy_pair = []
+        for i, attendees in enumerate(predictions['faces']):
+            name_energy_pair.append("*{}* has the expression: *{}*".
+                                    format(user_ids[i], predictions['faces'][i]['expression']))
+
         message = "The following people have been spotted in a meeting room {} and the current energy level is: *{}*"\
             .format(
-                " ".join(user_ids),
+                " ".join(name_energy_pair),
                 predictions['energy']
             )
         ReportEnergyLevel.send_slack_message(message)
-
-    def meeting_update_notification(self, ):
-
-
