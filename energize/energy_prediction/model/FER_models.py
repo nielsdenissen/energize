@@ -89,15 +89,6 @@ class ConvolutionalNNDropout(object):
         model.add(MaxPooling2D())
         model.add(Dropout(0.5))
 
-        model.add(
-            Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last', padding='same'))
-        model.add(BatchNormalization())
-        model.add(
-            Conv2D(filters=self.filters, kernel_size=self.kernel_size, activation='relu', data_format='channels_last', padding='same'))
-        model.add(BatchNormalization())
-        model.add(MaxPooling2D())
-        model.add(Dropout(0.5))
-
         model.add(Flatten())
 
         model.add(Dense(units=len(self.emotion_map.keys()), activation="softmax"))
