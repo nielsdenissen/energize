@@ -38,7 +38,7 @@ def echo(ws):
             app.logger.info("No message received...")
             continue
 
-        app.logger.info("Message received!")
+        app.logger.info(f"Message received: {message_count}")
 
         try:
             # Cut out the image header in start
@@ -52,13 +52,14 @@ def echo(ws):
 
             ws.send(json.dumps(result))
 
-            with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
-                f.write(file_like)
+            # with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
+            #     f.write(file_like)
 
-            message_count += 1
         except Exception as e:
             app.logger.error("ERROR: %s", e)
             continue
+        
+        message_count += 1
         
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
