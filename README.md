@@ -32,4 +32,5 @@ Install chrome extension:
 If you want to test while the server is running, you can run:
 ```bash
 python ./test/energy_prediction/test_main_server.py
+python ./test/energy_prediction/test_main_server_with_camera.py
 ```
