@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((req, sender, res) => {
 });
 
 function socketSetup(tab) {
-  const URL = "ws://4bf6a8c8.ngrok.io/media";
+  const URL = "ws://localhost:5000/media";
   const socket = new WebSocket(URL);
 
   socket.onopen = () => {

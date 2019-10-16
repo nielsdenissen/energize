@@ -70,7 +70,7 @@ def echo(ws):
 
 
 
-def build_predictor(scale, known_faces, tolerance, model):
+def build_predictor(scale, known_faces, tolerance, model, num_jitters):
     """Builds the energy predictor function from given
     configurables
 
@@ -90,7 +90,7 @@ def build_predictor(scale, known_faces, tolerance, model):
     read_expressions = ReadExpressions(model=model)
     def predict(image):
         locations = find_faces.find_faces(image)
-        names = compare_faces.get_names(image, locations)
+        names = compare_faces.get_names(image, locations, num_jitters)
         faces = read_expressions.get_faces(image, locations)
         expressions = read_expressions.get_expressions(faces)
         expressions = expressions + ["Unknown"]*(len(locations) - len(expressions))
@@ -118,12 +118,19 @@ if __name__ == '__main__':
     scale = float(config['DEFAULT'].get("scale", 1.))
     known_faces = config['DEFAULT'].get("known faces")
     tolerance = float(config['DEFAULT'].get("tolerance", 0.6))
+    num_jitters = int(config['DEFAULT'].get("num_jitters", 1))
     model = config['DEFAULT'].get("model")
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    model_path = os.path.join(dir_path, model)
     labels_map = {0: "Negative", 1: "Neutral", 2: "Positive"}
     model = ConvolutionalNNDropout((48, 48), labels_map, verbose=True,
-                                   model_filepath=model)
+                                   model_filepath=model_path)
 
-    PREDICTOR = build_predictor(scale=scale, known_faces=known_faces, tolerance=tolerance, model=model)
+    PREDICTOR = build_predictor(scale=scale,
+                                known_faces=known_faces,
+                                tolerance=tolerance,
+                                model=model,
+                                num_jitters=num_jitters)
 
     app.logger.setLevel(logging.DEBUG)
     from gevent import pywsgi
