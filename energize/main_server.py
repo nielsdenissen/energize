@@ -71,6 +71,20 @@ def echo(ws):
 
 
 def build_predictor(scale, known_faces, tolerance, model):
+    """Builds the energy predictor function from given
+    configurables
+
+    :param scale: scale image down or up before face extraction
+        down scaling speeds up but looses pixels
+    :param known_faces: location of a file with known faces
+        Either a npz file with pre-trained embeddings, or a directory
+        with subdirectories of images per persons.
+        Note that pre-trained embeddings is much faster
+    :param tolerance: maximum distance between embeddings to consider
+        a match in face comparison
+    :param model: facial expression recognition model
+    :return: function that returns an energy json given an image
+    """
     find_faces = FindFaces(scale=scale)
     compare_faces = CompareFaces(faces=known_faces, tolerance=tolerance)
     read_expressions = ReadExpressions(model=model)
@@ -90,7 +104,7 @@ def build_predictor(scale, known_faces, tolerance, model):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--file", type=str, nargs='?', default="config.ini", help="Config file")
+    parser.add_argument("-f", "--file", type=str, nargs=1, default="config.ini", help="Config file")
     args = parser.parse_args()
 
     # ----- Read config file -----
@@ -99,7 +113,7 @@ if __name__ == '__main__':
         config = configparser.ConfigParser()
         config.read(config_file)
     else:
-        config = {'DEFAULT':{}}
+        raise RuntimeError("No config file parsed")
 
     scale = float(config['DEFAULT'].get("scale", 1.))
     known_faces = config['DEFAULT'].get("known faces")
