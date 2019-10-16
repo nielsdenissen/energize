@@ -27,7 +27,7 @@ def echo(ws):
     while not ws.closed:
         energy_raw = input("Enter a number (0-100): ")
         try:
-            energy = int(energy_raw)
+            energy = int(energy_raw) * 10
             app.logger.info(f"Current energy level: {energy}")
             ws.send(json.dumps({"energy":energy}))
         except:
