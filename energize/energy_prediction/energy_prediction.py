@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import cv2
 import numpy as np
 from energize.energy_prediction.read_expressions import ReadExpressions
@@ -21,20 +20,3 @@ def predict_energy(img):
     out = {"energy":42}
     out['faces'] = [{"name":n, "location":l, "expression":e} for n, l, e in zip(names, locations, expressions)]
     return out
-=======
-from energize.energy_prediction.read_expressions import ReadExpressions
-from energize.energy_prediction.compare_faces import CompareFaces
-from energize.energy_prediction.find_faces import FindFaces
-
-find_faces = FindFaces()
-
-def predict_energy(image):
-    print(type(image))
-    out = {'energy level': 42}
-    return out
-
-
-
-
-
->>>>>>> 5efeba4... Add meeting start notification

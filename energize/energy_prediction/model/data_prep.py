@@ -27,11 +27,7 @@ def data_prep(data):
     return data
 
 
-<<<<<<< HEAD
 def get_training_data(data, target_size = None):
-=======
-def get_training_data(data, resize = None):
->>>>>>> 5efeba4... Add meeting start notification
     """
 
     :param data: processed data (pd.DataFrame) as a result of data_prep.py
@@ -46,7 +42,6 @@ def get_training_data(data, resize = None):
 
     images = np.stack(data['pixels'].values)
     images = images.reshape((-1, 48, 48, 1)).astype(np.float32)
-<<<<<<< HEAD
     if target_size is not None:
         print("Resizing images.")
         num_images = images.shape[0]
@@ -54,15 +49,6 @@ def get_training_data(data, resize = None):
 
         for i in tqdm(range(images.shape[0])):
             resized_images[i] = cv2.resize(images[i].squeeze(), (target_size[0], target_size[1]), interpolation = cv2.INTER_CUBIC)
-=======
-    if resize is not None:
-        print("Resizing images.")
-        num_images = images.shape[0]
-        resized_images = np.zeros([num_images, resize[0], resize[1]]).astype(np.float32)
-
-        for i in tqdm(range(images.shape[0])):
-            resized_images[i] = cv2.resize(images[i].squeeze(), (resize[0], resize[1]), interpolation = cv2.INTER_CUBIC)
->>>>>>> 5efeba4... Add meeting start notification
 
     labels = pd.get_dummies(data['emotion_energy'])
 
