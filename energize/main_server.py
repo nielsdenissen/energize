@@ -40,35 +40,39 @@ def echo(ws):
 
     while not ws.closed:
         message = ws.receive()
+        message_count += 1
         if message is None:
             app.logger.info("No message received...")
             continue
 
-        app.logger.info(f"Message received: {message_count}")
+        # Skip 4/5 messages
+        if message_count % 5 == 0:
+            app.logger.info(f"Message received: {message_count}")
 
-        try:
-            # Cut out the image header in start
-            if "," in message:
-                message = message.split(',')[1]
-            file_like = base64.b64decode(message)
-        
-#             result = energy_prediction.predict_energy(file_like)
-            # result = {"energy": random.randrange(1,100,1)}
+            try:
+                # Cut out the image header in start
+                if "," in message:
+                    message = message.split(',')[1]
+                file_like = base64.b64decode(message)
+            
+    #             result = energy_prediction.predict_energy(file_like)
+                # result = {"energy": random.randrange(1,100,1)}
 
-            image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
-            result = PREDICTOR(image)
-            print(result)
-            ws.send(json.dumps(result))
-            report_energy_level.meeting_start_notification(result)
+                image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
+                result = PREDICTOR(image)
+                print(result)
+                ws.send(json.dumps(result))
 
-            #with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
-            #    f.write(file_like)
+                with open(f"./pics_received/image.jpg", 'wb') as f:
+                    f.write(file_like)
 
-        except Exception as e:
-            app.logger.error("ERROR: %s", e)
-            continue
-        
-        message_count += 1
+                report_energy_level.meeting_start_notification(result)
+
+            except Exception as e:
+                app.logger.error("ERROR: %s", e)
+                continue
+        else:
+            app.logger.info(f"Message ignored: {message_count}")
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 
