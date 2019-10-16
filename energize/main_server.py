@@ -9,13 +9,9 @@ from flask import Flask
 from flask_sockets import Sockets
 from flask_cors import CORS, cross_origin
 
-import configparser
 import argparse
 
-from energize.energy_prediction.find_faces import FindFaces
-from energize.energy_prediction.compare_faces import CompareFaces
-from energize.energy_prediction.read_expressions import ReadExpressions
-from energize.energy_prediction.model.FER_models import ConvolutionalNNDropout
+from energize.energy_prediction.build_predictor import build_predictor
 
 PREDICTOR = lambda x: {"energy": 42}
 
@@ -69,68 +65,12 @@ def echo(ws):
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 
 
-
-def build_predictor(scale, known_faces, tolerance, model, num_jitters):
-    """Builds the energy predictor function from given
-    configurables
-
-    :param scale: scale image down or up before face extraction
-        down scaling speeds up but looses pixels
-    :param known_faces: location of a file with known faces
-        Either a npz file with pre-trained embeddings, or a directory
-        with subdirectories of images per persons.
-        Note that pre-trained embeddings is much faster
-    :param tolerance: maximum distance between embeddings to consider
-        a match in face comparison
-    :param model: facial expression recognition model
-    :return: function that returns an energy json given an image
-    """
-    find_faces = FindFaces(scale=scale)
-    compare_faces = CompareFaces(faces=known_faces, tolerance=tolerance)
-    read_expressions = ReadExpressions(model=model)
-    def predict(image):
-        locations = find_faces.find_faces(image)
-        names = compare_faces.get_names(image, locations, num_jitters)
-        faces = read_expressions.get_faces(image, locations)
-        expressions = read_expressions.get_expressions(faces)
-        expressions = expressions + ["Unknown"]*(len(locations) - len(expressions))
-        prediction = {}
-        prediction['energy'] = 42
-        prediction['faces'] = [{"name": n, "location": l, "expression": e} for n, l, e in zip(names, locations, expressions)]
-        prediction['image size'] = (image.shape[0], image.shape[1])
-        return prediction
-    return predict
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", type=str, nargs=1, default="config.ini", help="Config file")
     args = parser.parse_args()
 
-    # ----- Read config file -----
-    config_file = args.file
-    if os.path.isfile(config_file):
-        config = configparser.ConfigParser()
-        config.read(config_file)
-    else:
-        raise RuntimeError("No config file parsed")
-
-    scale = float(config['DEFAULT'].get("scale", 1.))
-    known_faces = config['DEFAULT'].get("known faces")
-    tolerance = float(config['DEFAULT'].get("tolerance", 0.6))
-    num_jitters = int(config['DEFAULT'].get("num_jitters", 1))
-    model = config['DEFAULT'].get("model")
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    model_path = os.path.join(dir_path, model)
-    labels_map = {0: "Negative", 1: "Neutral", 2: "Positive"}
-    model = ConvolutionalNNDropout((48, 48), labels_map, verbose=True,
-                                   model_filepath=model_path)
-
-    PREDICTOR = build_predictor(scale=scale,
-                                known_faces=known_faces,
-                                tolerance=tolerance,
-                                model=model,
-                                num_jitters=num_jitters)
+    PREDICTOR = build_predictor(args.file)
 
     app.logger.setLevel(logging.DEBUG)
     from gevent import pywsgi
