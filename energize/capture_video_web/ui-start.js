@@ -126,8 +126,8 @@
     function getPosition(el) {
       const width = imageSize[1];
       const height = imageSize[0];
-      const x = face.location[1] / width * window.innerWidth;
-      const y = face.location[0] / height * window.innerHeight;
+      const x = (face.location[1] / width) * window.innerWidth;
+      const y = (face.location[0] / height) * window.innerHeight;
       el.style.transform = `translate(${x}px, ${y}px)`;
     }
   }
