@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        * {
+          box-sizing: border-box;
+        }
+        html {
+          width: 220px;
+          padding: 0;
+        }
+        body {
+          margin: 0;
+          text-align: right;
+        }
+        .btn {
+          font-size: 18px;
+          width: 100%;
+          border: none;
+          display: inline-flex;
+          align-items: center;
+          padding: 10px;
+        }
+        .btn-text {
+          margin-left: 12px;
+        }
+        .btn-icon {
+          width: 32px;
+          height: 32px;
+        }
+      </style>
+    </head>
+    <body>
+      <button class="btn" id="btn">
+        <img class="btn-icon" src="./images/icon128.png"/>
+        <span class="btn-text" id="btn-text">start energizer</span>
+      </button>
+      <script src="./popup.mjs" type="module"></script>
+    </body>
+  </html>
