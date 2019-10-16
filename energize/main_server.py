@@ -50,7 +50,7 @@ def echo(ws):
         
             result = energy_prediction.predict_energy(file_like)
             # result = {"energy": random.randrange(1,100,1)}
-            report_energy_level.ReportEnergyLevel.meeting_start_notification(result)
+            report_energy_level.meeting_start_notification(result)
 
 
             ws.send(json.dumps(result))
