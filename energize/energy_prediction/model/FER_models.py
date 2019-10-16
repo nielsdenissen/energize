@@ -126,7 +126,6 @@ class ConvolutionalNNDropout(object):
         :return:
         """
 
-
         return self.model.predict(image_data)
 
     def predict_from_faces(self, faces):

@@ -8,12 +8,13 @@ import numpy as np
 from flask import Flask
 from flask_sockets import Sockets
 from flask_cors import CORS, cross_origin
-
 import argparse
 
 from energize.energy_prediction.build_predictor import build_predictor
+from energize.report_energy_levels import report_energy_level
 
 PREDICTOR = lambda x: {"energy": 42}
+
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -49,12 +50,16 @@ def echo(ws):
             # Cut out the image header in start
             if "," in message:
                 message = message.split(',')[1]
-
             file_like = base64.b64decode(message)
+        
+#             result = energy_prediction.predict_energy(file_like)
+            # result = {"energy": random.randrange(1,100,1)}
+
             image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
             result = PREDICTOR(image)
             print(result)
             ws.send(json.dumps(result))
+            report_energy_level.meeting_start_notification(result)
 
             #with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
             #    f.write(file_like)
@@ -64,7 +69,6 @@ def echo(ws):
             continue
         
         message_count += 1
-        
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 
