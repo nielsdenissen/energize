@@ -3,6 +3,7 @@ import pandas as pd
 import yaml
 from tqdm.auto import tqdm
 import cv2
+from sklearn.utils.class_weight import compute_class_weight
 
 def data_prep(data):
     """
@@ -27,12 +28,13 @@ def data_prep(data):
     return data
 
 
-def get_training_data(data, target_size = None):
+def get_training_data(data, target_size = None, convert_to_RGB = False):
     """
 
     :param data: processed data (pd.DataFrame) as a result of data_prep.py
     :param channels: number of image channels (1 for grayscale images)
     :param resize: Tuple (new_image_size[0], new_image_size[1])
+    :param convert_to_RGB:Boolean. If True, we convert the grayscale image to RGB by making 3 copies of the gray image.
     :return:
         images: np.array of shape (num_samples, image_size[0], image_size[1], channels)
         labels: np.array of shape (num_samples, num_categories)
@@ -49,6 +51,10 @@ def get_training_data(data, target_size = None):
 
         for i in tqdm(range(images.shape[0])):
             resized_images[i] = cv2.resize(images[i].squeeze(), (target_size[0], target_size[1]), interpolation = cv2.INTER_CUBIC)
+        images = resized_images
+
+    if convert_to_RGB:
+        images = np.repeat(images, 3, -1)
 
     labels = pd.get_dummies(data['emotion_energy'])
 
@@ -57,7 +63,12 @@ def get_training_data(data, target_size = None):
 
     labels = pd.get_dummies(labels).values
 
-    return images, labels, labels_map
+    # calculate class weights
+    y_integers = np.argmax(labels, axis=1)
+    class_weights = compute_class_weight('balanced', np.unique(y_integers), y_integers)
+    d_class_weights = dict(enumerate(class_weights))
+
+    return images, labels, labels_map, d_class_weights
 
 if __name__ == "__main__":
 
