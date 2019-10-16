@@ -1,6 +1,12 @@
 cmake
+flask
+flask-cors
+flask-sockets
+websocket-client
 opencv-python
 pillow
 numpy
 face_recognition
 scikit-learn
+keras
+tensorflow

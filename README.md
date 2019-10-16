@@ -10,3 +10,26 @@ There are 3 parts to this project:
 3. Report energy data back to the video conference
 
 ![alt text](./docs/img/EnergyMeter.png)
+
+## How to run
+Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+Start the prediction server:
+```bash
+python -m energize.main_server
+```
+
+Install chrome extension:
+1. Go to `chrome://extensions` and enable development mode
+2. Click load unpacked and select the `capture_video_web` folder to install extension
+3. Visit `meet.google.com` and click on extension icon to Start
+
+## How to test
+
+If you want to test while the server is running, you can run:
+```bash
+python ./test/energy_prediction/test_main_server.py
+```
