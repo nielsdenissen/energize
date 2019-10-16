@@ -51,8 +51,6 @@ def echo(ws):
                 message = message.split(',')[1]
 
             file_like = base64.b64decode(message)
-            #result = energy_prediction.predict_energy(file_like)
-
             image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
             result = PREDICTOR(image)
             print(result)

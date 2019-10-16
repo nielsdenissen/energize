@@ -78,7 +78,7 @@ class CompareFaces(PipelineModule):
             names = []
         self.next.do_shizzle(image=image, locations=locations, names=names)
 
-    def get_names(self, image, locations, num_jitters):
+    def get_names(self, image, locations, num_jitters=1):
         names = ["Unknown"] * len(locations)
         if len(locations) > 0:
             try:
