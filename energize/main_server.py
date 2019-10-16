@@ -38,21 +38,29 @@ def echo(ws):
             app.logger.info("No message received...")
             continue
 
-        app.logger.info("Message received!")
+        app.logger.info(f"Message received: {message_count}")
 
-        # Cut out the image header in start
-        if "," in message:
-            message = message.split(',')[1]
+        try:
+            # Cut out the image header in start
+            if "," in message:
+                message = message.split(',')[1]
+            
+            file_like = base64.b64decode(message)
         
-        file_like = base64.b64decode(message)
+            result = energy_prediction.predict_energy(file_like)
+            # result = {"energy": random.randrange(1,100,1)}
 
-        result = energy_prediction.predict_energy(file_like)
-        ws.send(json.dumps(result))
+            ws.send(json.dumps(result))
 
-        with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
-            f.write(file_like)
+            # with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
+            #     f.write(file_like)
 
+        except Exception as e:
+            app.logger.error("ERROR: %s", e)
+            continue
+        
         message_count += 1
+        
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 

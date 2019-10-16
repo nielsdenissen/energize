@@ -3,8 +3,12 @@ import numpy as np
 from energize.energy_prediction.read_expressions import ReadExpressions
 from energize.energy_prediction.compare_faces import CompareFaces
 from energize.energy_prediction.find_faces import FindFaces
+from energize.energy_prediction.model.FER_models import ConvolutionalNNDropout
 
-read_expressions = ReadExpressions()
+labels_map = {0: "Negative", 1: "Neutral", 2: "Positive"}
+model = ConvolutionalNNDropout((48, 48), labels_map, verbose=True, model_filepath="model/model.h5")
+
+read_expressions = ReadExpressions(model=model)
 compare_faces = CompareFaces(faces="/Users/nielsdenissen/Downloads/known_faces2.npz", tolerance=0.7)
 find_faces = FindFaces(scale=1)
 
