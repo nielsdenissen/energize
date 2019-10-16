@@ -1,7 +1,7 @@
 (function() {
   const body = document.querySelector("body");
   const ui = document.createElement("div");
-  ui.setAttribute('id', 'energizer__ui');
+  ui.setAttribute("id", "energizer__ui");
 
   ui.innerHTML = `
     <style>
@@ -10,7 +10,6 @@
         bottom: 30px;
         left: 30px;
         width: 300px;
-        height: 100px;
         background: #fff;
         z-index: 1000;
         border-radius: 4px;
@@ -32,7 +31,7 @@
         transition: width 700ms ease;
       }
       .progress-legend {
-        font-size: 32px;
+        font-size: 16px;
         display: flex;
         margin-top: 12px;
         justify-content: space-between;
@@ -43,9 +42,9 @@
       <div class="progress">
         <div class="progress-bar" id="progress-bar"></div>
         <div class="progress-legend">
-          <div>😔</div>
-          <div>🙂</div>
-          <div>😁</div>
+          <div>low</div>
+          <div>medium</div>
+          <div>high</div>
         </div>
       </div>
     </div>
@@ -53,7 +52,7 @@
 
   body.append(ui);
   console.log("energy monitoring UI added");
-  
+
   chrome.runtime.onMessage.addListener(function(request, sender, respond) {
     console.log("message received:", request);
     if (request.payload) {
@@ -65,27 +64,36 @@
     }
   });
 
+  function snakeCase(string) {
+    return string
+      .replace(/\W+/g, " ")
+      .split(/ |\B(?=[A-Z])/)
+      .map(word => word.toLowerCase())
+      .join("_");
+  }
+
   function updateMeter(energy) {
     const progress = document.getElementById("progress-bar");
     progress.style.width = Number(energy) + "%";
   }
 
   const EXPRESSION_EMOJI_TABLE = {
-    "Positive": "😁",
-    "Neutral": "🙂",
-    "Negative": "😔"
-  }
+    Positive: "😁",
+    Neutral: "🙂",
+    Negative: "😔"
+  };
 
   function renderFace(face) {
-    const elementId = `energizer__face__${face.name}`;
+    const elementId = `energizer__face__${snakeCase(face.name)}`;
     let element = document.getElementById(elementId);
     if (element) {
-      // update element position
+      const x = face.location[0];
+      const y = face.location[1];
+      // element.style.transform = `translate(${x}px, ${y}px)`;
     } else {
       element = document.createElement("div");
       element.style.cssText = `
-        background: #000000;
-        color: white;
+        background: #fff;
         box-sizing: border-box;
         font-size: 18px;
         display: flex;
@@ -93,21 +101,23 @@
         top: 20px;
         align-items: center;
         left: 20px;
-        border-radius: 50px;
-        padding: 8px 10px 10px 20px;
+        border-radius: 4px;
+        padding: 10px 18px;
+        transition: transform 1000ms ease-in-out;
         z-index: 1;
-      `
+      `;
       element.innerHTML = `
         <style>
           .emoji {
-            font-size:32px;
-            margin-left: 12px;
+            font-size: 32px;
+            margin-right: 12px;
           }
         </style>
+        <span class="emoji">${EXPRESSION_EMOJI_TABLE[face.expression] ||
+          "🤓"}</span>
         <span>${face.name}</span>
-        <span>${EXPRESSION_EMOJI_TABLE[face.expression] || "🙃"}</span>
       `;
-      element.setAttribute('id', `energizer__face__${face.name}`)
+      element.setAttribute("id", elementId);
       body.append(element);
     }
   }
