@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     data = pd.read_pickle(cfg["processed_data_filepath"])
 
-    train_images, train_labels, labels_map = get_training_data(data, convert_to_RGB=True)
+    train_images, train_labels, labels_map, class_weights = get_training_data(data, convert_to_RGB=True)
     image_shape = (48, 48)
     channels = 1
 

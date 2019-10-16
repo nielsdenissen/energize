@@ -1,5 +1,5 @@
 fer2013_csv_filepath: "fer2013.csv"
 processed_data_filepath: "data.pickle"
-model_filepath: "model2.h5"
+model_filepath: "model3.h5"
 transfer_learning_model_filepath: "resnet_model.h5"
 emotion_map_filepath: "emotion_map.json"

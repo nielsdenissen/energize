@@ -3,6 +3,7 @@ import pandas as pd
 import yaml
 from tqdm.auto import tqdm
 import cv2
+from sklearn.utils.class_weight import compute_class_weight
 
 def data_prep(data):
     """
@@ -62,7 +63,12 @@ def get_training_data(data, target_size = None, convert_to_RGB = False):
 
     labels = pd.get_dummies(labels).values
 
-    return images, labels, labels_map
+    # calculate class weights
+    y_integers = np.argmax(labels, axis=1)
+    class_weights = compute_class_weight('balanced', np.unique(y_integers), y_integers)
+    d_class_weights = dict(enumerate(class_weights))
+
+    return images, labels, labels_map, d_class_weights
 
 if __name__ == "__main__":
 

@@ -105,7 +105,7 @@ class ConvolutionalNNDropout(object):
             model.summary()
         self.model = model
 
-    def fit(self, image_data, labels, validation_split, epochs=50):
+    def fit(self, image_data, labels, validation_split, epochs=50, class_weights = None):
         """
         Trains the neural net on the data provided.
 
@@ -117,7 +117,7 @@ class ConvolutionalNNDropout(object):
         """
         self.model.compile(optimizer=Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=1e-7), loss=categorical_crossentropy, metrics=['accuracy'])
         self.model.fit(image_data, labels, epochs=epochs, validation_split=validation_split,
-                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)])
+                       callbacks=[ReduceLROnPlateau(), EarlyStopping(patience=3)], class_weight = class_weights)
 
     def predict(self, image_data):
         """
@@ -225,7 +225,7 @@ class TransferLearningNN(object):
             model.summary()
         self.model = model
 
-    def fit(self, image_data, labels, validation_split, epochs=50):
+    def fit(self, image_data, labels, validation_split, epochs=50, class_weights = None):
         """
         Trains the neural net on the data provided.
 
