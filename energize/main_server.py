@@ -1,15 +1,20 @@
 import base64
 import json
 import logging
-import random
-import time
+import os
+import cv2
+import numpy as np
 
 from flask import Flask
 from flask_sockets import Sockets
 from flask_cors import CORS, cross_origin
+import argparse
 
-from energize.energy_prediction import energy_prediction
+from energize.energy_prediction.build_predictor import build_predictor
 from energize.report_energy_levels import report_energy_level
+
+PREDICTOR = lambda x: {"energy": 42}
+
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -35,39 +40,50 @@ def echo(ws):
 
     while not ws.closed:
         message = ws.receive()
+        message_count += 1
         if message is None:
             app.logger.info("No message received...")
             continue
 
-        app.logger.info(f"Message received: {message_count}")
+        # Skip 4/5 messages
+        if message_count % 5 == 0:
+            app.logger.info(f"Message received: {message_count}")
 
-        try:
-            # Cut out the image header in start
-            if "," in message:
-                message = message.split(',')[1]
+            try:
+                # Cut out the image header in start
+                if "," in message:
+                    message = message.split(',')[1]
+                file_like = base64.b64decode(message)
             
-            file_like = base64.b64decode(message)
-        
-            result = energy_prediction.predict_energy(file_like)
-            # result = {"energy": random.randrange(1,100,1)}
-            report_energy_level.meeting_start_notification(result)
+    #             result = energy_prediction.predict_energy(file_like)
+                # result = {"energy": random.randrange(1,100,1)}
 
+                image = cv2.imdecode(np.fromstring(file_like, dtype=np.uint8), -1)
+                result = PREDICTOR(image)
+                print(result)
+                ws.send(json.dumps(result))
 
-            ws.send(json.dumps(result))
+                with open(f"./pics_received/image.jpg", 'wb') as f:
+                    f.write(file_like)
 
-            # with open(f"./pics_received/image{message_count}.jpg", 'wb') as f:
-            #     f.write(file_like)
+                report_energy_level.meeting_start_notification(result)
 
-        except Exception as e:
-            app.logger.error("ERROR: %s", e)
-            continue
-        
-        message_count += 1
+            except Exception as e:
+                app.logger.error("ERROR: %s", e)
+                continue
+        else:
+            app.logger.info(f"Message ignored: {message_count}")
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--file", type=str, nargs=1, default="config.ini", help="Config file")
+    args = parser.parse_args()
+
+    PREDICTOR = build_predictor(args.file)
+
     app.logger.setLevel(logging.DEBUG)
     from gevent import pywsgi
     from geventwebsocket.handler import WebSocketHandler

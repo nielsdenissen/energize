@@ -8,6 +8,7 @@ opencv-python
 pillow
 numpy
 face_recognition
+scikit-learn
 pandas
 PyYAML
 tqdm
