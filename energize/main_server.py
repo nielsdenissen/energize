@@ -9,6 +9,7 @@ from flask_sockets import Sockets
 from flask_cors import CORS, cross_origin
 
 from energize.energy_prediction import energy_prediction
+from energize.report_energy_levels import report_energy_level
 
 app = Flask(__name__)
 sockets = Sockets(app)
@@ -49,6 +50,8 @@ def echo(ws):
         
             result = energy_prediction.predict_energy(file_like)
             # result = {"energy": random.randrange(1,100,1)}
+            report_energy_level.meeting_start_notification(result)
+
 
             ws.send(json.dumps(result))
 
@@ -60,7 +63,6 @@ def echo(ws):
             continue
         
         message_count += 1
-        
 
     app.logger.info("Connection closed. Received a total of {} messages".format(message_count))
 

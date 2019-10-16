@@ -30,4 +30,3 @@ if __name__ == "__main__":
     print(predictions)
    # model.fit(train_images, train_labels, validation_split=0.1, epochs = 1)
    # model.model.save(cfg['model_filepath'])
-

@@ -1,3 +1,4 @@
+slackclient
 cmake
 flask
 flask-cors
@@ -7,5 +8,8 @@ opencv-python
 pillow
 numpy
 face_recognition
+pandas
+PyYAML
+tqdm
 keras
 tensorflow
