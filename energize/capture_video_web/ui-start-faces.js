@@ -3,9 +3,11 @@
 
   function create(face) {
     const EMOJI_MAP = {
-      "1": "😁",
+      "2": "😂",
+      "1": "😄",
       "0": "🙂",
-      "-1": "😔"
+      "-1": "😢",
+      "-2": "😭"
     };
     const el = document.createElement("div");
     el.style.cssText = `
@@ -23,7 +25,7 @@
       left: 20px;
       border-radius: 4px;
       padding: 10px 18px;
-      transition: transform 1000ms ease-in-out;
+      transition: transform 2000ms ease-in-out;
       z-index: 1;
     `;
     el.innerHTML = `
