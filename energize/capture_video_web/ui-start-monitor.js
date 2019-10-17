@@ -27,8 +27,8 @@
           flex-direction: column;
         }
         .progress-bar {
-          background: linear-gradient(to right, red, yellow, green);
-          height: 5px;
+          background: green;
+          height: 8px;
           position: relative;
           width: 100%;
           border-radius: 20px;
@@ -62,6 +62,17 @@
     const meter = document.getElementById("progress-bar");
     const percentage = energy <= MINIMUM ? MINIMUM : energy;
     meter.style.width = percentage + "%";
+    let color = "green";
+    if (percentage < 75) {
+      color = "orange"
+    }
+    if (percentage < 50) {
+      color = "yellow"
+    }
+    if (percentage < 25) {
+      color = "red"
+    }
+    meter.style.background = color;
   }
 
   chrome.runtime.onMessage.addListener(function(request, sender, respond) {
