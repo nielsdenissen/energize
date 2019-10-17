@@ -9,4 +9,5 @@ class EnergyPrediction:
         if len(expressions) == 0:
             return 0
         else:
-            return np.mean(expressions)
+            # scale to [-1;1]
+            return np.mean(expressions) / 2
