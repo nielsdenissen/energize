@@ -50,9 +50,9 @@ def meeting_start_notification(predictions):
         name_energy_pair.append("*{}* has the expression: *{}*".
                                 format(user_ids[i], translate_expressions(predictions['faces'][i]['expression'])))
 
-    message = "The following people have been spotted in a meeting room {} and the current energy level is: *{}*"\
+    message = "The following people have been spotted in a meeting room:\n {} \nand the current energy level is: *{}*"\
         .format(
-            " ".join(name_energy_pair),
+            " \n".join(name_energy_pair),
             translate_energy_levels(predictions['energy'])
         )
     send_slack_message(message)
