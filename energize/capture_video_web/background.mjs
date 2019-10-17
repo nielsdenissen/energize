@@ -84,31 +84,29 @@ function stop() {
 }
 
 function capture(tab) {
-  const INTERVAL = 500;
+  const INTERVAL = 2000;
   state.interval = setInterval(function() {
     logger.log(`capture screenshot per ${INTERVAL}ms`);
     chrome.tabs.captureVisibleTab(tab.windowId, { format: "jpeg" }, blob => {
       if (socket.readyState === socket.OPEN) {
         socket.send(blob);
+        logger.log(`captured screenshot sent`);
       } else {
-        logger.log("socket closed, retrying socket connection");
         socket = new WebSocket(WEB_SOCKET_URL);
+        logger.log("socket closed, retrying socket connection");
       }
-      logger.log(`captured screenshot sent`);
     });
   }, INTERVAL);
 }
 
 function startUI(tab) {
   logger.log("start ui script");
-  chrome.tabs.executeScript(tab.id, {
-    file: "./ui-start.js"
-  });
+  chrome.tabs.executeScript(tab.id, { file: "./ui-start-const.js" });
+  chrome.tabs.executeScript(tab.id, { file: "./ui-start-monitor.js" });
+  chrome.tabs.executeScript(tab.id, { file: "./ui-start-faces.js" });
 }
 
 function stopUI(tab) {
   logger.log("stop ui script");
-  chrome.tabs.executeScript(tab.id, {
-    file: "./ui-stop.js"
-  });
+  chrome.tabs.executeScript(tab.id, { file: "./ui-stop.js" });
 }
