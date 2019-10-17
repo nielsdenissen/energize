@@ -32,7 +32,7 @@
           position: relative;
           width: 100%;
           border-radius: 20px;
-          transition: width 2000ms ease-in-out;
+          transition: all 600ms ease-in-out;
         }
         .progress-legend {
           font-size: 16px;
