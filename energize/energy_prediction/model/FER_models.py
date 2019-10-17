@@ -138,9 +138,9 @@ class ConvolutionalNNDropout(object):
         # add channel
         resized_faces = np.expand_dims(resized_faces, axis = -1)
 
-        predictions = np.argmax(self.predict(resized_faces), axis = 1)
-        predictions = [self.emotion_map[i] for i in predictions]
-        return predictions
+        # predictions = np.argmax(self.predict(resized_faces), axis = 1)
+        # predictions = [self.emotion_map[i] for i in predictions]
+        return self.predict(resized_faces)
 
 
     def load_model(self, model_filepath):
