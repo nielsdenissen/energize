@@ -3,9 +3,9 @@
 
   function create(face) {
     const EMOJI_MAP = {
-      Positive: "😁",
-      Neutral: "🙂",
-      Negative: "😔"
+      "1": "😁",
+      "0": "🙂",
+      "-1": "😔"
     };
     const el = document.createElement("div");
     el.style.cssText = `
@@ -45,7 +45,7 @@
         }
       </style>
       <span class="pointer"></span>
-      <span class="emoji">${EMOJI_MAP[face.expression] || "🤓"}</span>
+      <span class="emoji">${EMOJI_MAP[face.expression.toString()] || "🤓"}</span>
       <span>${face.name}</span>
     `;
     return el;
