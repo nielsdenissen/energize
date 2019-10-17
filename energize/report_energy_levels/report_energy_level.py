@@ -26,18 +26,22 @@ def translate_energy_levels(energy):
     elif energy < -0.5:
         return "Bolke is probably in the room"
     elif 0 <= energy <= 0.5:
-        return "Probably talking about Software Engineering"
+        return "Talking about coding"
     else:
-        return "Talking about Data Engineering"
+        return "Cookies have just been shared"
 
 
 def translate_expressions(expression):
-    if expression == -1:
+    if expression == -2:
+        return "About to YOLO merge"
+    elif expression == -1:
         return "Probably has a pebble in their shoe"
     elif expression == 0:
         return "Member of the Borg"
+    elif expression == 1:
+        return "Thinking about lunch"
     else:
-        return "Is on Drugs"
+        return "Thinking about the weekend"
 
 
 def meeting_start_notification(predictions):
@@ -50,9 +54,9 @@ def meeting_start_notification(predictions):
         name_energy_pair.append("*{}* has the expression: *{}*".
                                 format(user_ids[i], translate_expressions(predictions['faces'][i]['expression'])))
 
-    message = "The following people have been spotted in a meeting room {} and the current energy level is: *{}*"\
+    message = "The following people have been spotted in a meeting room:\n {} \nand the current energy level is: *{}*"\
         .format(
-            " ".join(name_energy_pair),
+            " \n".join(name_energy_pair),
             translate_energy_levels(predictions['energy'])
         )
     send_slack_message(message)
