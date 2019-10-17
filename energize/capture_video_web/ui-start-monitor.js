@@ -32,7 +32,7 @@
           position: relative;
           width: 100%;
           border-radius: 20px;
-          transition: width 700ms ease;
+          transition: width 2000ms ease-in-out;
         }
         .progress-legend {
           font-size: 16px;
@@ -64,10 +64,10 @@
     meter.style.width = percentage + "%";
     let color = "green";
     if (percentage < 75) {
-      color = "orange"
+      color = "yellow"
     }
     if (percentage < 50) {
-      color = "yellow"
+      color = "orange"
     }
     if (percentage < 25) {
       color = "red"
