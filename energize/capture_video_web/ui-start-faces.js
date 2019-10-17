@@ -9,7 +9,7 @@
     };
     const el = document.createElement("div");
     el.style.cssText = `
-      background: #fff;
+      background: rgba(255, 255, 255, 0.7);
       box-sizing: border-box;
       box-shadow:
         0 2px 2px 0 rgba(0,0,0,0.14),
@@ -37,7 +37,7 @@
           height: 0;
           border-style: solid;
           border-width: 8px 10px 8px 0;
-          border-color: transparent #fff transparent transparent;
+          border-color: transparent rgba(255, 255, 255, 0.7) transparent transparent;
           position: absolute;
           left: 0;
           top: 50%;
