@@ -26,18 +26,22 @@ def translate_energy_levels(energy):
     elif energy < -0.5:
         return "Bolke is probably in the room"
     elif 0 <= energy <= 0.5:
-        return "Probably talking about Software Engineering"
+        return "Talking about coding"
     else:
-        return "Talking about Data Engineering"
+        return "Cookies have just been shared"
 
 
 def translate_expressions(expression):
-    if expression == -1:
+    if expression == -2:
+        return "About to YOLO merge"
+    elif expression == -1:
         return "Probably has a pebble in their shoe"
     elif expression == 0:
         return "Member of the Borg"
+    elif expression == 1:
+        return "Thinking about lunch"
     else:
-        return "Is on Drugs"
+        return "Thinking about the weekend"
 
 
 def meeting_start_notification(predictions):

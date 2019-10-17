@@ -39,6 +39,7 @@ def echo(ws):
     #     app.logger.info(f"Current energy level: {energy}")
     #     ws.send(json.dumps({"energy":energy}))
     #     time.sleep(5)
+    next_window = datetime.datetime.now() + datetime.timedelta(seconds=20)
 
     while not ws.closed:
         message = ws.receive()
@@ -69,10 +70,9 @@ def echo(ws):
                 with open(f"./pics_received/image.jpg", 'wb') as f:
                     f.write(file_like)
 
-                next_window = datetime.datetime.now() + datetime.timedelta(seconds=20)
-
                 if len(result['faces']) > 0 and (datetime.datetime.now() < next_window):
                     report_energy_level.meeting_start_notification(result)
+                    next_window = datetime.datetime.now() + datetime.timedelta(seconds=20)
 
             except Exception as e:
                 app.logger.error("ERROR: %s", e)
