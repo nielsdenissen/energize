@@ -1,7 +1,11 @@
 (function() {
   function cleanup() {
-    const ui = document.getElementById('energizer__ui');
-    document.querySelector('body').removeChild(ui);
+    const elements = document.querySelectorAll('[id^="energizer"]');
+    if (elements.length) {
+      for (let element of elements) {
+        document.querySelector('body').removeChild(element);
+      }
+    }
   }
   cleanup();
 })();
